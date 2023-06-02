@@ -63,11 +63,13 @@ public class BankController {
 	ResponseEntity<?> newAccount(@RequestBody BankAccountInput bankAccountInput) {
 		Account savedAccount;
 		if ("Checking".equals(bankAccountInput.accountType())) {
-			savedAccount = accountRepository.save(checkingAccountFactory.create(bankAccountInput.firstName(),
-					null, bankAccountInput.socialSecurityNumber(), bankAccountInput.initDeposit()));
+			savedAccount = accountRepository
+					.save(checkingAccountFactory.create(bankAccountInput.firstName(), bankAccountInput.lastName(),
+							bankAccountInput.socialSecurityNumber(), bankAccountInput.initDeposit()));
 		} else if ("Savings".equals(bankAccountInput.accountType())) {
-			savedAccount = accountRepository.save(savingsAccountFactory.create(bankAccountInput.firstName(),
-					null, bankAccountInput.socialSecurityNumber(), bankAccountInput.initDeposit()));
+			savedAccount = accountRepository
+					.save(savingsAccountFactory.create(bankAccountInput.firstName(), bankAccountInput.lastName(),
+							bankAccountInput.socialSecurityNumber(), bankAccountInput.initDeposit()));
 		} else {
 			throw new UnknownAccountTypeException(bankAccountInput.accountType());
 		}

@@ -56,7 +56,7 @@ public abstract class Account {
 		return lastName;
 	}
 
-	public void setFastName(String lastName) {
+	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
