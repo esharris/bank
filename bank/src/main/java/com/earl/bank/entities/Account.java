@@ -2,6 +2,7 @@ package com.earl.bank.entities;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +20,9 @@ public abstract class Account {
 	protected String socialSecurityNumber;
 	protected BigDecimal balance;
 
+	@Column(unique = true)
 	protected String accountNumber;
+
 	protected BigDecimal rate;
 
 	public Account() {
