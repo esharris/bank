@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 
 import com.earl.bank.entities.CheckingAccount;
-import com.earl.bank.random.RandomAccountNumberGenerator;
 import com.earl.bank.random.RandomNumeralString;
 
 @Component
@@ -15,19 +14,13 @@ public class CheckingAccountFactoryImpl implements CheckingAccountFactory {
 
 	private final RandomNumeralString randomNumeralString;
 
-	private final RandomAccountNumberGenerator randomAccountNumberGenerator;
-
-	public CheckingAccountFactoryImpl(RandomNumeralString randomNumeralString,
-			RandomAccountNumberGenerator randomAccountNumberGenerator) {
+	public CheckingAccountFactoryImpl(RandomNumeralString randomNumeralString) {
 		this.randomNumeralString = randomNumeralString;
-		this.randomAccountNumberGenerator = randomAccountNumberGenerator;
 	}
 
 	@Override
-	public CheckingAccount create(String firstName, String lastName, String socialSecurityNumber,
-			BigDecimal initDeposit) {
-		CheckingAccount result = new CheckingAccount(firstName, lastName, socialSecurityNumber, initDeposit,
-				randomAccountNumberGenerator.nextAccountNumber(socialSecurityNumber));
+	public CheckingAccount create(String accountNumber, BigDecimal initDeposit) {
+		CheckingAccount result = new CheckingAccount(accountNumber, initDeposit);
 		result.setRate(BaseRateSingleton.getInstance().getValue().multiply(new BigDecimal("1.5")));
 		result.setAccountNumber("2" + result.getAccountNumber());
 		result.setDebitCardNumber(index++);

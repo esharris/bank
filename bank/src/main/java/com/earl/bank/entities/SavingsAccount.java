@@ -14,9 +14,8 @@ public class SavingsAccount extends Account {
 
 	}
 
-	public SavingsAccount(String firsstName, String lastName, String socialSecurityNumber, BigDecimal balance,
-			String accountNumber) {
-		super(firsstName, lastName, socialSecurityNumber, balance, accountNumber);
+	public SavingsAccount(String accountNumber, BigDecimal balance) {
+		super(accountNumber, balance);
 	}
 
 	public String getSafetyDepositBoxID() {
@@ -38,9 +37,8 @@ public class SavingsAccount extends Account {
 	@Override
 	public String toString() {
 		return "SavingsAccount [safetyDepositBoxID=" + safetyDepositBoxID + ", safetyDepositBoxKey="
-				+ safetyDepositBoxKey + ", id=" + id + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", socialSecurityNumber=" + socialSecurityNumber + ", balance=" + balance + ", accountNumber="
-				+ accountNumber + ", rate=" + rate + "]";
+				+ safetyDepositBoxKey + ", id=" + id + ", balance=" + balance + ", accountNumber=" + accountNumber
+				+ ", rate=" + rate + "]";
 	}
 
 }

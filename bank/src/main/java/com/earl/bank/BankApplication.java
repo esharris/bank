@@ -20,6 +20,7 @@ import com.earl.bank.entities.Account;
 import com.earl.bank.entityfactories.CheckingAccountFactory;
 import com.earl.bank.entityfactories.SavingsAccountFactory;
 import com.earl.bank.jpa.AccountRepository;
+import com.earl.bank.jpa.AccountRepositoryHelper;
 
 @SpringBootApplication
 public class BankApplication {
@@ -58,13 +59,11 @@ public class BankApplication {
 					while ((dataRow = br.readLine()) != null) {
 						BankAccountInput bankAccountInput = bankAccountInputFactory.create(dataRow);
 						if ("Checking".equals(bankAccountInput.accountType())) {
-							accountRepository.save(checkingAccountFactory.create(bankAccountInput.firstName(),
-									bankAccountInput.lastName(), bankAccountInput.socialSecurityNumber(),
-									bankAccountInput.initDeposit()));
+							AccountRepositoryHelper.saveIfAccountNumberUnique(accountRepository, checkingAccountFactory
+									.create(bankAccountInput.accountNumber(), bankAccountInput.initDeposit()));
 						} else if ("Savings".equals(bankAccountInput.accountType())) {
-							accountRepository.save(savingsAccountFactory.create(bankAccountInput.firstName(),
-									bankAccountInput.lastName(), bankAccountInput.socialSecurityNumber(),
-									bankAccountInput.initDeposit()));
+							AccountRepositoryHelper.saveIfAccountNumberUnique(accountRepository, savingsAccountFactory
+									.create(bankAccountInput.accountNumber(), bankAccountInput.initDeposit()));
 						} else {
 							log.warn("Unknown account type; " + bankAccountInput.accountType());
 						}

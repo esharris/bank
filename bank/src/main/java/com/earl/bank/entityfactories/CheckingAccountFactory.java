@@ -6,6 +6,6 @@ import com.earl.bank.entities.CheckingAccount;
 
 public interface CheckingAccountFactory {
 
-	CheckingAccount create(String firstName, String lastName, String socialSecurityNumber, BigDecimal initDeposit);
+	CheckingAccount create(String accountNumber, BigDecimal initDeposit);
 
 }

@@ -23,6 +23,7 @@ import com.earl.bank.entities.Account;
 import com.earl.bank.entityfactories.CheckingAccountFactory;
 import com.earl.bank.entityfactories.SavingsAccountFactory;
 import com.earl.bank.jpa.AccountRepository;
+import com.earl.bank.jpa.AccountRepositoryHelper;
 
 @RestController
 public class BankController {
@@ -44,7 +45,7 @@ public class BankController {
 		this.checkingAccountFactory = checkingAccountFactory;
 	}
 
-	@GetMapping("/bank")
+	@GetMapping("/accounts")
 	public CollectionModel<EntityModel<Account>> retrieveAllAccounts() {
 		List<EntityModel<Account>> accountList = accountRepository.findAll().stream()
 				.map(accountModelAssembler::toModel).toList();
@@ -52,24 +53,22 @@ public class BankController {
 				linkTo(methodOn(BankController.class).retrieveAllAccounts()).withSelfRel());
 	}
 
-	@GetMapping("/bank/{accountNumber}")
+	@GetMapping("/accounts/{accountNumber}")
 	public EntityModel<Account> retrieveAccount(@PathVariable String accountNumber) {
 		Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
 		Account account = optionalAccount.orElseThrow(() -> new AccountNotFoundException(accountNumber));
 		return accountModelAssembler.toModel(account);
 	}
 
-	@PostMapping("/bank")
+	@PostMapping("/accounts")
 	ResponseEntity<?> newAccount(@RequestBody BankAccountInput bankAccountInput) {
 		Account savedAccount;
 		if ("Checking".equals(bankAccountInput.accountType())) {
-			savedAccount = accountRepository
-					.save(checkingAccountFactory.create(bankAccountInput.firstName(), bankAccountInput.lastName(),
-							bankAccountInput.socialSecurityNumber(), bankAccountInput.initDeposit()));
+			savedAccount = AccountRepositoryHelper.saveIfAccountNumberUnique(accountRepository,
+					checkingAccountFactory.create(bankAccountInput.accountNumber(), bankAccountInput.initDeposit()));
 		} else if ("Savings".equals(bankAccountInput.accountType())) {
-			savedAccount = accountRepository
-					.save(savingsAccountFactory.create(bankAccountInput.firstName(), bankAccountInput.lastName(),
-							bankAccountInput.socialSecurityNumber(), bankAccountInput.initDeposit()));
+			savedAccount = AccountRepositoryHelper.saveIfAccountNumberUnique(accountRepository,
+					savingsAccountFactory.create(bankAccountInput.accountNumber(), bankAccountInput.initDeposit()));
 		} else {
 			throw new UnknownAccountTypeException(bankAccountInput.accountType());
 		}

@@ -14,9 +14,8 @@ public class CheckingAccount extends Account {
 
 	}
 
-	public CheckingAccount(String firstName, String lastName, String socialSecurityNumber, BigDecimal balance,
-			String accountNumber) {
-		super(firstName, lastName, socialSecurityNumber, balance, accountNumber);
+	public CheckingAccount(String accountNumber, BigDecimal balance) {
+		super(accountNumber, balance);
 	}
 
 	public long getDebitCardNumber() {
@@ -38,9 +37,7 @@ public class CheckingAccount extends Account {
 	@Override
 	public String toString() {
 		return "CheckingAccount [debitCardNumber=" + debitCardNumber + ", debitCardPIN=" + debitCardPIN + ", id=" + id
-				+ ", firstName=" + firstName + ", lastName=" + lastName + ", socialSecurityNumber="
-				+ socialSecurityNumber + ", balance=" + balance + ", accountNumber=" + accountNumber + ", rate=" + rate
-				+ "]";
+				+ ", balance=" + balance + ", accountNumber=" + accountNumber + ", rate=" + rate + "]";
 	}
 
 }

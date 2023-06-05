@@ -6,6 +6,6 @@ import com.earl.bank.entities.SavingsAccount;
 
 public interface SavingsAccountFactory {
 
-	SavingsAccount create(String firstName, String lastName, String socialSecurityNumber, BigDecimal initDeposit);
+	SavingsAccount create(String accountNumber, BigDecimal initDeposit);
 
 }
