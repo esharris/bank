@@ -15,12 +15,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.earl.bank.dto.BankAccountInput;
+import com.earl.bank.dto.CustomerInput;
 import com.earl.bank.dtofactories.BankAccountInputFactory;
+import com.earl.bank.dtofactories.CustomerInputFactory;
 import com.earl.bank.entities.Account;
+import com.earl.bank.entities.Customer;
 import com.earl.bank.entityfactories.CheckingAccountFactory;
+import com.earl.bank.entityfactories.CustomerFactory;
 import com.earl.bank.entityfactories.SavingsAccountFactory;
 import com.earl.bank.jpa.AccountRepository;
 import com.earl.bank.jpa.AccountRepositoryHelper;
+import com.earl.bank.jpa.CustomerRepository;
+import com.earl.bank.jpa.CustomerRepositoryHelper;
 
 @SpringBootApplication
 public class BankApplication {
@@ -29,20 +35,30 @@ public class BankApplication {
 
 	private final BankAccountInputFactory bankAccountInputFactory;
 
+	private final CustomerInputFactory customerInputFactory;
+
 	private final CheckingAccountFactory checkingAccountFactory;
 
 	private final SavingsAccountFactory savingsAccountFactory;
 
+	private final CustomerFactory customerFactory;
+
 	private final AccountRepository accountRepository;
 
+	private final CustomerRepository customerRepository;
+
 	@Autowired
-	public BankApplication(BankAccountInputFactory bankAccountInputFactory,
+	public BankApplication(BankAccountInputFactory bankAccountInputFactory, CustomerInputFactory customerInputFactory,
 			CheckingAccountFactory checkingAccountFactory, SavingsAccountFactory savingsAccountFactory,
-			AccountRepository accountRepository) {
+			CustomerFactory customerFactory, AccountRepository accountRepository,
+			CustomerRepository customerRepository) {
 		this.bankAccountInputFactory = bankAccountInputFactory;
+		this.customerInputFactory = customerInputFactory;
 		this.savingsAccountFactory = savingsAccountFactory;
 		this.checkingAccountFactory = checkingAccountFactory;
+		this.customerFactory = customerFactory;
 		this.accountRepository = accountRepository;
+		this.customerRepository = customerRepository;
 	}
 
 	public static void main(String[] args) {
@@ -52,10 +68,11 @@ public class BankApplication {
 	@Bean
 	CommandLineRunner demo() {
 		return args -> {
-			final String file = "data/NewBankAccounts.csv";
+			final String accountFileName = "data/NewBankAccounts.csv";
+			final String customerFileName = "data/NewBankCustomers.csv";
 			String dataRow;
 			try {
-				try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+				try (BufferedReader br = new BufferedReader(new FileReader(accountFileName))) {
 					while ((dataRow = br.readLine()) != null) {
 						BankAccountInput bankAccountInput = bankAccountInputFactory.create(dataRow);
 						if ("Checking".equals(bankAccountInput.accountType())) {
@@ -70,13 +87,32 @@ public class BankApplication {
 					}
 				}
 			} catch (FileNotFoundException e) {
-				log.error("Couldn't find file to open: " + file);
+				log.error("Couldn't find account file to open: " + accountFileName);
 			} catch (IOException e) {
-				log.error("Couldn't read file");
+				log.error("Couldn't read account file");
 			}
-			final List<Account> data = accountRepository.findAll();
-			for (Account r : data) {
-				log.info(r.toString());
+			final List<Account> accountList = accountRepository.findAll();
+			for (Account account : accountList) {
+				log.info(account.toString());
+				log.info("");
+			}
+			try {
+				try (BufferedReader br = new BufferedReader(new FileReader(customerFileName))) {
+					while ((dataRow = br.readLine()) != null) {
+						CustomerInput customerInput = customerInputFactory.create(dataRow);
+						CustomerRepositoryHelper.saveIfSocialSecurityNumberUnique(customerRepository,
+								customerFactory.create(customerInput.socialSecurityNumber(), customerInput.firstName(),
+										customerInput.lastName()));
+					}
+				}
+			} catch (FileNotFoundException e) {
+				log.error("Couldn't find customer file to open: " + accountFileName);
+			} catch (IOException e) {
+				log.error("Couldn't read customer file");
+			}
+			final List<Customer> customerList = customerRepository.findAll();
+			for (Customer customer : customerList) {
+				log.info(customer.toString());
 				log.info("");
 			}
 		};

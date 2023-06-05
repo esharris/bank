@@ -18,7 +18,7 @@ public class BankAccountInputFactoryImpl implements BankAccountInputFactory {
 			BigDecimal initDeposit = new BigDecimal(dataRecords[2]);
 			return new BankAccountInput(accountNumber, accountType, initDeposit);
 		} else {
-			throw new RuntimeException("Expected 5 components, but saw " + dataRecords.length);
+			throw new RuntimeException("Expected 3 components, but saw " + dataRecords.length);
 		}
 	}
 }
