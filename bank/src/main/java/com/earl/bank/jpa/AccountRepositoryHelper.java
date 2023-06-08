@@ -3,6 +3,8 @@ package com.earl.bank.jpa;
 import java.util.Optional;
 
 import com.earl.bank.entities.Account;
+import com.earl.bank.jpa.exceptions.AccountNotFoundException;
+import com.earl.bank.jpa.exceptions.DuplicateAccountNumberException;
 
 public class AccountRepositoryHelper {
 

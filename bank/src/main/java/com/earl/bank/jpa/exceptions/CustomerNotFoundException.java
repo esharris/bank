@@ -1,4 +1,4 @@
-package com.earl.bank.jpa;
+package com.earl.bank.jpa.exceptions;
 
 public class CustomerNotFoundException extends RuntimeException {
 

@@ -29,12 +29,12 @@ import com.earl.bank.entities.Customer;
 import com.earl.bank.entityfactories.CheckingAccountFactory;
 import com.earl.bank.entityfactories.CustomerFactory;
 import com.earl.bank.entityfactories.SavingsAccountFactory;
-import com.earl.bank.jpa.AccountNotFoundException;
 import com.earl.bank.jpa.AccountRepository;
 import com.earl.bank.jpa.AccountRepositoryHelper;
-import com.earl.bank.jpa.CustomerNotFoundException;
 import com.earl.bank.jpa.CustomerRepository;
 import com.earl.bank.jpa.CustomerRepositoryHelper;
+import com.earl.bank.jpa.exceptions.AccountNotFoundException;
+import com.earl.bank.jpa.exceptions.CustomerNotFoundException;
 
 @SpringBootApplication
 public class BankApplication {

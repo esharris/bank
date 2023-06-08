@@ -3,6 +3,8 @@ package com.earl.bank.jpa;
 import java.util.Optional;
 
 import com.earl.bank.entities.Customer;
+import com.earl.bank.jpa.exceptions.CustomerNotFoundException;
+import com.earl.bank.jpa.exceptions.DuplicateSocialSecurityNumberException;
 
 public class CustomerRepositoryHelper {
 
