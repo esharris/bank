@@ -1,6 +1,7 @@
 package com.earl.bank.entityfactories;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 
 import org.springframework.stereotype.Component;
 
@@ -18,9 +19,9 @@ public class SavingsAccountFactoryImpl implements SavingsAccountFactory {
 
 	@Override
 	public SavingsAccount create(String accountNumber, BigDecimal initDeposit) {
-		SavingsAccount result = new SavingsAccount(accountNumber, initDeposit);
+		SavingsAccount result = new SavingsAccount(accountNumber, initDeposit, new HashSet<>());
 		result.setRate(BaseRateSingleton.getInstance().getValue().subtract(new BigDecimal("0.25")));
-		result.setAccountNumber("1" + result.getAccountNumber());
+		result.setAccountNumber(result.getAccountNumber());
 		result.setSafetyDepositBoxID(randomNumeralString.nextNumeralString(3));
 		result.setSafetyDepositBoxKey(randomNumeralString.nextNumeralString(4));
 		return result;

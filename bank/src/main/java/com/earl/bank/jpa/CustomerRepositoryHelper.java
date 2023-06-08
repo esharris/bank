@@ -1,5 +1,7 @@
 package com.earl.bank.jpa;
 
+import java.util.Optional;
+
 import com.earl.bank.entities.Customer;
 
 public class CustomerRepositoryHelper {
@@ -10,5 +12,10 @@ public class CustomerRepositoryHelper {
 		} else {
 			throw new DuplicateSocialSecurityNumberException(customer.getSocialSecurityNumber());
 		}
+	}
+
+	public static Customer getCustomer(CustomerRepository customerRepository, String socialSecurityNumber) {
+		Optional<Customer> optionalCustomer = customerRepository.findBySocialSecurityNumber(socialSecurityNumber);
+		return optionalCustomer.orElseThrow(() -> new CustomerNotFoundException(socialSecurityNumber));
 	}
 }

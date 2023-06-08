@@ -3,8 +3,8 @@ package com.earl.bank.controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.earl.bank.dto.BankAccountInput;
 import com.earl.bank.dto.CustomerInput;
@@ -41,6 +42,8 @@ public class BankController {
 
 	private final RepresentationModelAssembler<Customer, EntityModel<Customer>> customerModelAssembler;
 
+	private final RelationshipManager relationshipManager;
+
 	private final CheckingAccountFactory checkingAccountFactory;
 
 	private final SavingsAccountFactory savingsAccountFactory;
@@ -52,12 +55,13 @@ public class BankController {
 			RepresentationModelAssembler<Account, EntityModel<Account>> accountModelAssembler,
 			CustomerRepository customerRepository,
 			RepresentationModelAssembler<Customer, EntityModel<Customer>> customerModelAssembler,
-			CheckingAccountFactory checkingAccountFactory, SavingsAccountFactory savingsAccountFactory,
-			CustomerFactory customerFactory) {
+			RelationshipManager relationshipManager, CheckingAccountFactory checkingAccountFactory,
+			SavingsAccountFactory savingsAccountFactory, CustomerFactory customerFactory) {
 		this.accountRepository = accountRepository;
 		this.accountModelAssembler = accountModelAssembler;
 		this.customerRepository = customerRepository;
 		this.customerModelAssembler = customerModelAssembler;
+		this.relationshipManager = relationshipManager;
 		this.savingsAccountFactory = savingsAccountFactory;
 		this.checkingAccountFactory = checkingAccountFactory;
 		this.customerFactory = customerFactory;
@@ -81,16 +85,33 @@ public class BankController {
 
 	@GetMapping("/accounts/{accountNumber}")
 	public EntityModel<Account> retrieveAccount(@PathVariable String accountNumber) {
-		Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
-		Account account = optionalAccount.orElseThrow(() -> new AccountNotFoundException(accountNumber));
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		return accountModelAssembler.toModel(account);
 	}
 
 	@GetMapping("/customers/{socialSecurityNumber}")
 	public EntityModel<Customer> retrieveCustomer(@PathVariable String socialSecurityNumber) {
-		Optional<Customer> optionalCustomer = customerRepository.findBySocialSecurityNumber(socialSecurityNumber);
-		Customer customer = optionalCustomer.orElseThrow(() -> new CustomerNotFoundException(socialSecurityNumber));
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
 		return customerModelAssembler.toModel(customer);
+	}
+
+	@GetMapping("/accounts/{accountNumber}/customers")
+	public CollectionModel<EntityModel<Customer>> retrieveCustomersForAccount(@PathVariable String accountNumber) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		List<EntityModel<Customer>> customerList = account.getCustomerSet().stream()
+				.map(customerModelAssembler::toModel).toList();
+		return CollectionModel.of(customerList,
+				linkTo(methodOn(BankController.class).retrieveCustomersForAccount(accountNumber)).withSelfRel());
+	}
+
+	@GetMapping("/customers/{socialSecurityNumber}/accounts")
+	public CollectionModel<EntityModel<Account>> retrieveAccountsForCustomer(
+			@PathVariable String socialSecurityNumber) {
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+		List<EntityModel<Account>> accountList = customer.getAccountSet().stream().map(accountModelAssembler::toModel)
+				.toList();
+		return CollectionModel.of(accountList,
+				linkTo(methodOn(BankController.class).retrieveAccountsForCustomer(socialSecurityNumber)).withSelfRel());
 	}
 
 	@PostMapping("/accounts")
@@ -116,5 +137,29 @@ public class BankController {
 						customerInput.lastName()));
 		EntityModel<?> entityModel = customerModelAssembler.toModel(savedCustomer);
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
+
+	@PostMapping("/customers/{socialSecurityNumber}/accounts/{accountNumber}")
+	public ResponseEntity<Customer> addAccount(@PathVariable String socialSecurityNumber,
+			@PathVariable String accountNumber) {
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		relationshipManager.addAccount(customer, account);
+		String locationString = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUriString();
+		int i = locationString.lastIndexOf("/");
+		URI location = URI.create(locationString.substring(0, i));
+		return ResponseEntity.created(location).build();
+	}
+
+	@PostMapping("accounts/{accountNumber}/customers/{socialSecurityNumber}")
+	public ResponseEntity<Account> addStudent(@PathVariable String accountNumber,
+			@PathVariable String socialSecurityNumber) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+		relationshipManager.addCustomer(account, customer);
+		String locationString = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUriString();
+		int i = locationString.lastIndexOf("/");
+		URI location = URI.create(locationString.substring(0, i));
+		return ResponseEntity.created(location).build();
 	}
 }

@@ -1,6 +1,7 @@
 package com.earl.bank.entityfactories;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 
 import org.springframework.stereotype.Component;
 
@@ -20,9 +21,9 @@ public class CheckingAccountFactoryImpl implements CheckingAccountFactory {
 
 	@Override
 	public CheckingAccount create(String accountNumber, BigDecimal initDeposit) {
-		CheckingAccount result = new CheckingAccount(accountNumber, initDeposit);
+		CheckingAccount result = new CheckingAccount(accountNumber, initDeposit, new HashSet<>());
 		result.setRate(BaseRateSingleton.getInstance().getValue().multiply(new BigDecimal("1.5")));
-		result.setAccountNumber("2" + result.getAccountNumber());
+		result.setAccountNumber(result.getAccountNumber());
 		result.setDebitCardNumber(index++);
 		result.setDebitCardPIN(randomNumeralString.nextNumeralString(4));
 		return result;

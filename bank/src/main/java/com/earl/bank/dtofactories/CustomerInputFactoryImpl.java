@@ -16,7 +16,7 @@ public class CustomerInputFactoryImpl implements CustomerInputFactory {
 			String lastName = dataRecords[2];
 			return new CustomerInput(socialSecurityNumber, firstName, lastName);
 		} else {
-			throw new RuntimeException("Expected 3 components, but saw " + dataRecords.length);
+			throw new RuntimeException("Expected 3 customer components, but saw " + dataRecords.length);
 		}
 	}
 }

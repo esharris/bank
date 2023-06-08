@@ -1,4 +1,4 @@
-package com.earl.bank.controller;
+package com.earl.bank.jpa;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

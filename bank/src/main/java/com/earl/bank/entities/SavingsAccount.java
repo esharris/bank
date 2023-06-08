@@ -1,6 +1,7 @@
 package com.earl.bank.entities;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 
@@ -14,8 +15,8 @@ public class SavingsAccount extends Account {
 
 	}
 
-	public SavingsAccount(String accountNumber, BigDecimal balance) {
-		super(accountNumber, balance);
+	public SavingsAccount(String accountNumber, BigDecimal balance, Set<Customer> customerSet) {
+		super(accountNumber, balance, customerSet);
 	}
 
 	public String getSafetyDepositBoxID() {

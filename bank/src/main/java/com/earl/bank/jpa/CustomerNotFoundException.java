@@ -1,10 +1,10 @@
-package com.earl.bank.controller;
+package com.earl.bank.jpa;
 
 public class CustomerNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 4501818700053623278L;
 
 	public CustomerNotFoundException(String socialSecurityNumber) {
-		super("social security number=" + socialSecurityNumber);
+		super("social security number: " + socialSecurityNumber);
 	}
 }
