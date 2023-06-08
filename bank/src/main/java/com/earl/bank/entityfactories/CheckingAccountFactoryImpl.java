@@ -23,7 +23,6 @@ public class CheckingAccountFactoryImpl implements CheckingAccountFactory {
 	public CheckingAccount create(String accountNumber, BigDecimal initDeposit) {
 		CheckingAccount result = new CheckingAccount(accountNumber, initDeposit, new HashSet<>());
 		result.setRate(BaseRateSingleton.getInstance().getValue().multiply(new BigDecimal("1.5")));
-		result.setAccountNumber(result.getAccountNumber());
 		result.setDebitCardNumber(index++);
 		result.setDebitCardPIN(randomNumeralString.nextNumeralString(4));
 		return result;
