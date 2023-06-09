@@ -15,14 +15,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.earl.bank.dto.BankAccountInput;
+import com.earl.bank.dto.CheckingAccountUpdateInput;
 import com.earl.bank.dto.CustomerInput;
+import com.earl.bank.dto.CustomerUpdateInput;
+import com.earl.bank.dto.SavingsAccountUpdateInput;
 import com.earl.bank.entities.Account;
+import com.earl.bank.entities.CheckingAccount;
 import com.earl.bank.entities.Customer;
+import com.earl.bank.entities.SavingsAccount;
 import com.earl.bank.entityfactories.CheckingAccountFactory;
 import com.earl.bank.entityfactories.CustomerFactory;
 import com.earl.bank.entityfactories.SavingsAccountFactory;
@@ -161,5 +167,51 @@ public class BankController {
 		int i = locationString.lastIndexOf("/");
 		URI location = URI.create(locationString.substring(0, i));
 		return ResponseEntity.created(location).build();
+	}
+
+	@PutMapping("/customers/{socialSecurityNumber}")
+	public ResponseEntity<Customer> replaceEntity(@PathVariable String socialSecurityNumber,
+			@RequestBody CustomerUpdateInput customerUpdateInput) {
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+		customer.setFirstName(customerUpdateInput.firstName());
+		customer.setLastName(customerUpdateInput.lastName());
+		customerRepository.save(customer);
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+		return ResponseEntity.created(location).build();
+	}
+
+	@PutMapping("accounts/{accountNumber}/checking")
+	public ResponseEntity<Account> replaceCheckingAccount(@PathVariable String accountNumber,
+			@RequestBody CheckingAccountUpdateInput checkingAccountUpdateInput) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		if (account instanceof CheckingAccount) {
+			CheckingAccount checkingAccount = (CheckingAccount) account;
+			checkingAccount.setBalance(checkingAccountUpdateInput.balance());
+			checkingAccount.setRate(checkingAccountUpdateInput.rate());
+			checkingAccount.setDebitCardPIN(checkingAccountUpdateInput.debitCardPIN());
+			accountRepository.save(checkingAccount);
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+			return ResponseEntity.created(location).build();
+		} else {
+			throw new AccountMismatchException("checking", account.getAccountNumber());
+		}
+	}
+
+	@PutMapping("accounts/{accountNumber}/savings")
+	public ResponseEntity<Account> replaceSavingsAccount(@PathVariable String accountNumber,
+			@RequestBody SavingsAccountUpdateInput savingsAccountUpdateInput) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		if (account instanceof SavingsAccount) {
+			SavingsAccount savingsAccount = (SavingsAccount) account;
+			savingsAccount.setBalance(savingsAccountUpdateInput.balance());
+			savingsAccount.setRate(savingsAccountUpdateInput.rate());
+			savingsAccount.setSafetyDepositBoxID(savingsAccountUpdateInput.safetyDepositBoxId());
+			savingsAccount.setSafetyDepositBoxKey(savingsAccountUpdateInput.safetyDepositBoxKey());
+			accountRepository.save(savingsAccount);
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+			return ResponseEntity.created(location).build();
+		} else {
+			throw new AccountMismatchException("savings", account.getAccountNumber());
+		}
 	}
 }
