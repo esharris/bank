@@ -12,6 +12,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -145,18 +146,6 @@ public class BankController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@PostMapping("/customers/{socialSecurityNumber}/accounts/{accountNumber}")
-	public ResponseEntity<Customer> addAccount(@PathVariable String socialSecurityNumber,
-			@PathVariable String accountNumber) {
-		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
-		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
-		relationshipManager.addAccount(customer, account);
-		String locationString = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUriString();
-		int i = locationString.lastIndexOf("/");
-		URI location = URI.create(locationString.substring(0, i));
-		return ResponseEntity.created(location).build();
-	}
-
 	@PostMapping("accounts/{accountNumber}/customers/{socialSecurityNumber}")
 	public ResponseEntity<Account> addStudent(@PathVariable String accountNumber,
 			@PathVariable String socialSecurityNumber) {
@@ -169,14 +158,15 @@ public class BankController {
 		return ResponseEntity.created(location).build();
 	}
 
-	@PutMapping("/customers/{socialSecurityNumber}")
-	public ResponseEntity<Customer> replaceEntity(@PathVariable String socialSecurityNumber,
-			@RequestBody CustomerUpdateInput customerUpdateInput) {
+	@PostMapping("/customers/{socialSecurityNumber}/accounts/{accountNumber}")
+	public ResponseEntity<Customer> addAccount(@PathVariable String socialSecurityNumber,
+			@PathVariable String accountNumber) {
 		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
-		customer.setFirstName(customerUpdateInput.firstName());
-		customer.setLastName(customerUpdateInput.lastName());
-		customerRepository.save(customer);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		relationshipManager.addAccount(customer, account);
+		String locationString = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUriString();
+		int i = locationString.lastIndexOf("/");
+		URI location = URI.create(locationString.substring(0, i));
 		return ResponseEntity.created(location).build();
 	}
 
@@ -214,4 +204,50 @@ public class BankController {
 			throw new AccountMismatchException("savings", account.getAccountNumber());
 		}
 	}
+
+	@PutMapping("/customers/{socialSecurityNumber}")
+	public ResponseEntity<Customer> replaceEntity(@PathVariable String socialSecurityNumber,
+			@RequestBody CustomerUpdateInput customerUpdateInput) {
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+		customer.setFirstName(customerUpdateInput.firstName());
+		customer.setLastName(customerUpdateInput.lastName());
+		customerRepository.save(customer);
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+		return ResponseEntity.created(location).build();
+	}
+
+	@DeleteMapping("/accounts/{accountNumber}")
+	public ResponseEntity<Account> deleteAccoount(@PathVariable String accountNumber) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		relationshipManager.removeAccount(account);
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/customers/{socialSecurityNumber}")
+	public ResponseEntity<Customer> deleteCustomer(@PathVariable String socialSecurityNumber) {
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+		relationshipManager.removeCustomer(customer);
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/customers/{socialSecurityNumber}/accounts/{accountNumber}")
+	public ResponseEntity<Customer> removeAccount(@PathVariable String socialSecurityNumber,
+			@PathVariable String accountNumber) {
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+
+		relationshipManager.removeAccount(customer, account);
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("accounts/{accountNumber}/customers/{socialSecurityNumber}")
+	public ResponseEntity<Account> removeCustomer(@PathVariable String accountNumber,
+			@PathVariable String socialSecurityNumber) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+
+		relationshipManager.removeCustomer(account, customer);
+		return ResponseEntity.noContent().build();
+	}
+
 }
