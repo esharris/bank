@@ -206,7 +206,7 @@ public class BankController {
 	}
 
 	@PutMapping("/customers/{socialSecurityNumber}")
-	public ResponseEntity<Customer> replaceEntity(@PathVariable String socialSecurityNumber,
+	public ResponseEntity<Customer> replaceVCustomer(@PathVariable String socialSecurityNumber,
 			@RequestBody CustomerUpdateInput customerUpdateInput) {
 		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
 		customer.setFirstName(customerUpdateInput.firstName());
