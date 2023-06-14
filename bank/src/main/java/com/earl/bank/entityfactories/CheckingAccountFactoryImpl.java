@@ -27,4 +27,9 @@ public class CheckingAccountFactoryImpl implements CheckingAccountFactory {
 		result.setDebitCardPIN(randomNumeralString.nextNumeralString(4));
 		return result;
 	}
+
+	@Override
+	public long generateUniqueDebitCardNumber() {
+		return index++;
+	}
 }

@@ -8,4 +8,5 @@ public interface CheckingAccountFactory {
 
 	CheckingAccount create(long accountNumber, BigDecimal initDeposit);
 
+	long generateUniqueDebitCardNumber();
 }

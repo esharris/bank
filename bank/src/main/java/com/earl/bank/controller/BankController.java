@@ -14,6 +14,7 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -238,6 +239,111 @@ public class BankController {
 		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
 		customer.setFirstName(customerUpdateInput.firstName());
 		customer.setLastName(customerUpdateInput.lastName());
+		customerRepository.save(customer);
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+		return ResponseEntity.created(location).build();
+	}
+
+	@PatchMapping("accounts/{accountNumber}/checking/debitcardnumber")
+	public ResponseEntity<Account> replaceCheckingAccountDebitCardNumber(@PathVariable long accountNumber) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		if (account instanceof CheckingAccount) {
+			CheckingAccount checkingAccount = (CheckingAccount) account;
+			checkingAccount.setDebitCardNumber(checkingAccountFactory.generateUniqueDebitCardNumber());
+			accountRepository.save(checkingAccount);
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+			return ResponseEntity.created(location).build();
+		} else {
+			throw new AccountMismatchException("checking", account.getAccountNumber());
+		}
+	}
+
+	/**
+	 * The user can’t modify the index or the account number, because they uniquely
+	 * identity the account.
+	 * 
+	 * @param accountNumber
+	 * @param savingsAccountUpdateInput
+	 * @return
+	 */
+	@PatchMapping("accounts/{accountNumber}/savings")
+	public ResponseEntity<Account> partiallyReplaceSavingsAccount(@PathVariable long accountNumber,
+			@RequestBody SavingsAccountUpdateInput savingsAccountUpdateInput) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		if (account instanceof SavingsAccount) {
+			SavingsAccount savingsAccount = (SavingsAccount) account;
+			if (savingsAccountUpdateInput.balance() != null) {
+				savingsAccount.setBalance(savingsAccountUpdateInput.balance());
+			}
+			if (savingsAccountUpdateInput.rate() != null) {
+				savingsAccount.setRate(savingsAccountUpdateInput.rate());
+			}
+			if (savingsAccountUpdateInput.safetyDepositBoxId() != null) {
+				savingsAccount.setSafetyDepositBoxId(savingsAccountUpdateInput.safetyDepositBoxId());
+			}
+			if (savingsAccountUpdateInput.safetyDepositBoxKey() != null) {
+				savingsAccount.setSafetyDepositBoxKey(savingsAccountUpdateInput.safetyDepositBoxKey());
+			}
+			accountRepository.save(savingsAccount);
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+			return ResponseEntity.created(location).build();
+		} else {
+			throw new AccountMismatchException("savings", account.getAccountNumber());
+		}
+	}
+
+	/**
+	 * The user can’t modify the index or the account number, because they uniquely
+	 * identity the account.
+	 * 
+	 * Why not let this method update the debitCardNumber? Because, this component
+	 * has to sync with the CheckingAccountFactory counter to be unique.
+	 * 
+	 * @param accountNumber
+	 * @param checkingAccountUpdateInput
+	 * @return
+	 */
+	@PatchMapping("accounts/{accountNumber}/checking")
+	public ResponseEntity<Account> partiallyReplaceCheckingAccount(@PathVariable long accountNumber,
+			@RequestBody CheckingAccountUpdateInput checkingAccountUpdateInput) {
+		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
+		if (account instanceof CheckingAccount) {
+			CheckingAccount checkingAccount = (CheckingAccount) account;
+			if (checkingAccountUpdateInput.balance() != null) {
+				checkingAccount.setBalance(checkingAccountUpdateInput.balance());
+			}
+			if (checkingAccountUpdateInput.rate() != null) {
+				checkingAccount.setRate(checkingAccountUpdateInput.rate());
+			}
+			if (checkingAccountUpdateInput.debitCardPIN() != null) {
+				checkingAccount.setDebitCardPIN(checkingAccountUpdateInput.debitCardPIN());
+			}
+			accountRepository.save(checkingAccount);
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
+			return ResponseEntity.created(location).build();
+		} else {
+			throw new AccountMismatchException("checking", account.getAccountNumber());
+		}
+	}
+
+	/**
+	 * The user can’t modify the index or the social security number, because they
+	 * uniquely identify the Customer.
+	 * 
+	 * @param socialSecurityNumber
+	 * @param customerUpdateInput
+	 * @return
+	 */
+	@PatchMapping("/customers/{socialSecurityNumber}")
+	public ResponseEntity<Customer> partiallyReplaceCustomer(@PathVariable String socialSecurityNumber,
+			@RequestBody CustomerUpdateInput customerUpdateInput) {
+		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
+		if (customerUpdateInput.firstName() != null) {
+			customer.setFirstName(customerUpdateInput.firstName());
+		}
+		if (customerUpdateInput.lastName() != null) {
+			customer.setLastName(customerUpdateInput.lastName());
+		}
 		customerRepository.save(customer);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
 		return ResponseEntity.created(location).build();
