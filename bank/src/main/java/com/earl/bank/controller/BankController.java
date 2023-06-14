@@ -170,16 +170,23 @@ public class BankController {
 		return ResponseEntity.created(location).build();
 	}
 
+	/**
+	 * The user can’t modify the index or the account number, because they uniquely
+	 * identity the account.
+	 * 
+	 * Why not let this method update the debitCardNumber? Because, this component
+	 * has to sync with the CheckingAccountFactory counter to be unique.
+	 * 
+	 * @param accountNumber
+	 * @param checkingAccountUpdateInput
+	 * @return
+	 */
 	@PutMapping("accounts/{accountNumber}/checking")
 	public ResponseEntity<Account> replaceCheckingAccount(@PathVariable long accountNumber,
 			@RequestBody CheckingAccountUpdateInput checkingAccountUpdateInput) {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		if (account instanceof CheckingAccount) {
 			CheckingAccount checkingAccount = (CheckingAccount) account;
-			/**
-			 * Why not let this method update the debitCardNumber? Because, this component
-			 * has to sync with the CheckingAccountFactory counter to be unique.
-			 */
 			checkingAccount.setBalance(checkingAccountUpdateInput.balance());
 			checkingAccount.setRate(checkingAccountUpdateInput.rate());
 			checkingAccount.setDebitCardPIN(checkingAccountUpdateInput.debitCardPIN());
@@ -191,6 +198,14 @@ public class BankController {
 		}
 	}
 
+	/**
+	 * The user can’t modify the index or the account number, because they uniquely
+	 * identity the account.
+	 * 
+	 * @param accountNumber
+	 * @param savingsAccountUpdateInput
+	 * @return
+	 */
 	@PutMapping("accounts/{accountNumber}/savings")
 	public ResponseEntity<Account> replaceSavingsAccount(@PathVariable long accountNumber,
 			@RequestBody SavingsAccountUpdateInput savingsAccountUpdateInput) {
@@ -199,7 +214,7 @@ public class BankController {
 			SavingsAccount savingsAccount = (SavingsAccount) account;
 			savingsAccount.setBalance(savingsAccountUpdateInput.balance());
 			savingsAccount.setRate(savingsAccountUpdateInput.rate());
-			savingsAccount.setSafetyDepositBoxID(savingsAccountUpdateInput.safetyDepositBoxId());
+			savingsAccount.setSafetyDepositBoxId(savingsAccountUpdateInput.safetyDepositBoxId());
 			savingsAccount.setSafetyDepositBoxKey(savingsAccountUpdateInput.safetyDepositBoxKey());
 			accountRepository.save(savingsAccount);
 			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").build().toUri();
@@ -209,6 +224,14 @@ public class BankController {
 		}
 	}
 
+	/**
+	 * The user can’t modify the index or the social security number, because they
+	 * uniquely identify the Customer.
+	 * 
+	 * @param socialSecurityNumber
+	 * @param customerUpdateInput
+	 * @return
+	 */
 	@PutMapping("/customers/{socialSecurityNumber}")
 	public ResponseEntity<Customer> replaceCustomer(@PathVariable String socialSecurityNumber,
 			@RequestBody CustomerUpdateInput customerUpdateInput) {

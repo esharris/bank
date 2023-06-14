@@ -8,7 +8,7 @@ import jakarta.persistence.Entity;
 @Entity
 public class SavingsAccount extends Account {
 
-	private String safetyDepositBoxID;
+	private String safetyDepositBoxId;
 	private String safetyDepositBoxKey;
 
 	public SavingsAccount() {
@@ -19,12 +19,12 @@ public class SavingsAccount extends Account {
 		super(accountNumber, balance, customerSet);
 	}
 
-	public String getSafetyDepositBoxID() {
-		return safetyDepositBoxID;
+	public String getSafetyDepositBoxId() {
+		return safetyDepositBoxId;
 	}
 
-	public void setSafetyDepositBoxID(String safetyDepositBoxID) {
-		this.safetyDepositBoxID = safetyDepositBoxID;
+	public void setSafetyDepositBoxId(String safetyDepositBoxID) {
+		this.safetyDepositBoxId = safetyDepositBoxID;
 	}
 
 	public String getSafetyDepositBoxKey() {
@@ -37,7 +37,7 @@ public class SavingsAccount extends Account {
 
 	@Override
 	public String toString() {
-		return "SavingsAccount [safetyDepositBoxID=" + safetyDepositBoxID + ", safetyDepositBoxKey="
+		return "SavingsAccount [safetyDepositBoxID=" + safetyDepositBoxId + ", safetyDepositBoxKey="
 				+ safetyDepositBoxKey + ", id=" + id + ", balance=" + balance + ", accountNumber=" + accountNumber
 				+ ", rate=" + rate + "]";
 	}

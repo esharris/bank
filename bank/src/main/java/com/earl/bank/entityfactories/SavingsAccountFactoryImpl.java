@@ -21,7 +21,7 @@ public class SavingsAccountFactoryImpl implements SavingsAccountFactory {
 	public SavingsAccount create(long accountNumber, BigDecimal initDeposit) {
 		SavingsAccount result = new SavingsAccount(accountNumber, initDeposit, new HashSet<>());
 		result.setRate(BaseRateSingleton.getInstance().getValue().subtract(new BigDecimal("0.25")));
-		result.setSafetyDepositBoxID(randomNumeralString.nextNumeralString(3));
+		result.setSafetyDepositBoxId(randomNumeralString.nextNumeralString(3));
 		result.setSafetyDepositBoxKey(randomNumeralString.nextNumeralString(4));
 		return result;
 	}
