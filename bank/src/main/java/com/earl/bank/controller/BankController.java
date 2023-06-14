@@ -176,6 +176,10 @@ public class BankController {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		if (account instanceof CheckingAccount) {
 			CheckingAccount checkingAccount = (CheckingAccount) account;
+			/**
+			 * Why not let this method update the debitCardNumber? Because, this component
+			 * has to sync with the CheckingAccountFactory counter to be unique.
+			 */
 			checkingAccount.setBalance(checkingAccountUpdateInput.balance());
 			checkingAccount.setRate(checkingAccountUpdateInput.rate());
 			checkingAccount.setDebitCardPIN(checkingAccountUpdateInput.debitCardPIN());
@@ -206,7 +210,7 @@ public class BankController {
 	}
 
 	@PutMapping("/customers/{socialSecurityNumber}")
-	public ResponseEntity<Customer> replaceVCustomer(@PathVariable String socialSecurityNumber,
+	public ResponseEntity<Customer> replaceCustomer(@PathVariable String socialSecurityNumber,
 			@RequestBody CustomerUpdateInput customerUpdateInput) {
 		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
 		customer.setFirstName(customerUpdateInput.firstName());
