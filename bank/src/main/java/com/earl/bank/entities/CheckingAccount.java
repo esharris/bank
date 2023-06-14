@@ -3,11 +3,13 @@ package com.earl.bank.entities;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 @Entity
 public class CheckingAccount extends Account {
 
+	@Column(unique = true)
 	private long debitCardNumber;
 	private String debitCardPIN;
 
