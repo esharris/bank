@@ -13,7 +13,7 @@ public class BankAccountInputFactoryImpl implements BankAccountInputFactory {
 	public BankAccountInput create(String dataRow) {
 		String[] dataRecords = dataRow.split(",");
 		if (dataRecords.length == 3) {
-			String accountNumber = dataRecords[0];
+			long accountNumber = Long.valueOf(dataRecords[0]);
 			String accountType = dataRecords[1];
 			BigDecimal initDeposit = new BigDecimal(dataRecords[2]);
 			return new BankAccountInput(accountNumber, accountType, initDeposit);

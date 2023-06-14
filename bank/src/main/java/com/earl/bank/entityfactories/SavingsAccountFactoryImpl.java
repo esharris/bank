@@ -18,7 +18,7 @@ public class SavingsAccountFactoryImpl implements SavingsAccountFactory {
 	}
 
 	@Override
-	public SavingsAccount create(String accountNumber, BigDecimal initDeposit) {
+	public SavingsAccount create(long accountNumber, BigDecimal initDeposit) {
 		SavingsAccount result = new SavingsAccount(accountNumber, initDeposit, new HashSet<>());
 		result.setRate(BaseRateSingleton.getInstance().getValue().subtract(new BigDecimal("0.25")));
 		result.setSafetyDepositBoxID(randomNumeralString.nextNumeralString(3));

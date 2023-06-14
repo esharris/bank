@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class DuplicateAccountNumberException extends RuntimeException {
 	private static final long serialVersionUID = 7238651371301457460L;
 
-	public DuplicateAccountNumberException(String accountNumber) {
+	public DuplicateAccountNumberException(long accountNumber) {
 		super("Seen duplicate account number " + accountNumber + ". It must be unique.");
 	}
 }

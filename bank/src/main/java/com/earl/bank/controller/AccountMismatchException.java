@@ -8,7 +8,7 @@ public class AccountMismatchException extends RuntimeException {
 
 	private static final long serialVersionUID = -9006395008073416073L;
 
-	public AccountMismatchException(String accountType, String accountNumber) {
+	public AccountMismatchException(String accountType, long accountNumber) {
 		super("Expecting " + accountType + ". account number: " + accountNumber);
 	}
 }

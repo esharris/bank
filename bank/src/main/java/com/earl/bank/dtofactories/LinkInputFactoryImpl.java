@@ -13,7 +13,7 @@ public class LinkInputFactoryImpl implements LinkInputFactory {
 		if (dataRecords.length == 2) {
 			String socialSecurityNumber = dataRecords[0];
 			String accountNumber = dataRecords[1];
-			return new LinkInput(socialSecurityNumber, accountNumber);
+			return new LinkInput(socialSecurityNumber, Long.valueOf(accountNumber));
 		} else {
 			throw new RuntimeException("Expected 2 link components, but saw " + dataRecords.length);
 		}

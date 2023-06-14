@@ -8,7 +8,7 @@ public class LinkNonexistentException extends RuntimeException {
 
 	private static final long serialVersionUID = 4137163574564294695L;
 
-	public LinkNonexistentException(String socialSecurityNumber, String accountNumber) {
+	public LinkNonexistentException(String socialSecurityNumber, long accountNumber) {
 		super("The customer does not have this account. social security number: " + socialSecurityNumber
 				+ ", account number: " + accountNumber);
 	}

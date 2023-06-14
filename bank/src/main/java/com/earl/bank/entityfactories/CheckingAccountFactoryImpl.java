@@ -20,7 +20,7 @@ public class CheckingAccountFactoryImpl implements CheckingAccountFactory {
 	}
 
 	@Override
-	public CheckingAccount create(String accountNumber, BigDecimal initDeposit) {
+	public CheckingAccount create(long accountNumber, BigDecimal initDeposit) {
 		CheckingAccount result = new CheckingAccount(accountNumber, initDeposit, new HashSet<>());
 		result.setRate(BaseRateSingleton.getInstance().getValue().multiply(new BigDecimal("1.5")));
 		result.setDebitCardNumber(index++);

@@ -15,7 +15,7 @@ public class CheckingAccount extends Account {
 
 	}
 
-	public CheckingAccount(String accountNumber, BigDecimal balance, Set<Customer> customerSet) {
+	public CheckingAccount(long accountNumber, BigDecimal balance, Set<Customer> customerSet) {
 		super(accountNumber, balance, customerSet);
 	}
 

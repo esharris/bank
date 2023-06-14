@@ -16,7 +16,7 @@ public class AccountRepositoryHelper {
 		}
 	}
 
-	public static Account getAccount(AccountRepository accountRepository, String accountNumber) {
+	public static Account getAccount(AccountRepository accountRepository, long accountNumber) {
 		Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
 		return optionalAccount.orElseThrow(() -> new AccountNotFoundException(accountNumber));
 	}

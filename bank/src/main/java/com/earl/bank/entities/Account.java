@@ -21,7 +21,7 @@ public abstract class Account {
 	protected long id;
 
 	@Column(unique = true)
-	protected String accountNumber;
+	protected long accountNumber;
 
 	protected BigDecimal balance;
 
@@ -37,7 +37,7 @@ public abstract class Account {
 
 	}
 
-	public Account(String accountNumber, BigDecimal balance, Set<Customer> customerSet) {
+	public Account(long accountNumber, BigDecimal balance, Set<Customer> customerSet) {
 		super();
 		this.accountNumber = accountNumber;
 		this.balance = balance;
@@ -55,11 +55,11 @@ public abstract class Account {
 		this.id = id;
 	}
 
-	public String getAccountNumber() {
+	public long getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(String accountNumber) {
+	public void setAccountNumber(long accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 

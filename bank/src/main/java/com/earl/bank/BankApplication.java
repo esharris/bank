@@ -91,13 +91,13 @@ public class BankApplication {
 			 * sets that can't be initialized. Add fetch=fetchType=Eager to Customer and
 			 * Account fixes the problem. But this makes things less efficient.
 			 */
-			Map<String, Account> accountNumberToAccount = new HashMap<>();
+			Map<Long, Account> accountNumberToAccount = new HashMap<>();
 			try {
 				try (BufferedReader br = new BufferedReader(new FileReader(accountFileName))) {
 					String dataRow;
 					while ((dataRow = br.readLine()) != null) {
 						BankAccountInput bankAccountInput = bankAccountInputFactory.create(dataRow);
-						String accountNumber = bankAccountInput.accountNumber();
+						long accountNumber = bankAccountInput.accountNumber();
 						if ("Checking".equals(bankAccountInput.accountType())) {
 							accountNumberToAccount.put(accountNumber, AccountRepositoryHelper.saveIfAccountNumberUnique(
 									accountRepository,
@@ -160,7 +160,7 @@ public class BankApplication {
 							throw new CustomerNotFoundException(socialSecurityNumber);
 						}
 
-						String accountNumber = linkInput.accountNumber();
+						long accountNumber = linkInput.accountNumber();
 						Account account;
 						if (accountNumberToAccount.containsKey(accountNumber)) {
 							account = accountNumberToAccount.get(accountNumber)

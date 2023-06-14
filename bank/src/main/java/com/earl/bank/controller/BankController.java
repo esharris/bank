@@ -91,7 +91,7 @@ public class BankController {
 	}
 
 	@GetMapping("/accounts/{accountNumber}")
-	public EntityModel<Account> retrieveAccount(@PathVariable String accountNumber) {
+	public EntityModel<Account> retrieveAccount(@PathVariable long accountNumber) {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		return accountModelAssembler.toModel(account);
 	}
@@ -103,7 +103,7 @@ public class BankController {
 	}
 
 	@GetMapping("/accounts/{accountNumber}/customers")
-	public CollectionModel<EntityModel<Customer>> retrieveCustomersForAccount(@PathVariable String accountNumber) {
+	public CollectionModel<EntityModel<Customer>> retrieveCustomersForAccount(@PathVariable long accountNumber) {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		List<EntityModel<Customer>> customerList = account.getCustomerSet().stream()
 				.map(customerModelAssembler::toModel).toList();
@@ -147,7 +147,7 @@ public class BankController {
 	}
 
 	@PostMapping("accounts/{accountNumber}/customers/{socialSecurityNumber}")
-	public ResponseEntity<Account> addStudent(@PathVariable String accountNumber,
+	public ResponseEntity<Account> addStudent(@PathVariable long accountNumber,
 			@PathVariable String socialSecurityNumber) {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
@@ -160,7 +160,7 @@ public class BankController {
 
 	@PostMapping("/customers/{socialSecurityNumber}/accounts/{accountNumber}")
 	public ResponseEntity<Customer> addAccount(@PathVariable String socialSecurityNumber,
-			@PathVariable String accountNumber) {
+			@PathVariable long accountNumber) {
 		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		relationshipManager.addAccount(customer, account);
@@ -171,7 +171,7 @@ public class BankController {
 	}
 
 	@PutMapping("accounts/{accountNumber}/checking")
-	public ResponseEntity<Account> replaceCheckingAccount(@PathVariable String accountNumber,
+	public ResponseEntity<Account> replaceCheckingAccount(@PathVariable long accountNumber,
 			@RequestBody CheckingAccountUpdateInput checkingAccountUpdateInput) {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		if (account instanceof CheckingAccount) {
@@ -188,7 +188,7 @@ public class BankController {
 	}
 
 	@PutMapping("accounts/{accountNumber}/savings")
-	public ResponseEntity<Account> replaceSavingsAccount(@PathVariable String accountNumber,
+	public ResponseEntity<Account> replaceSavingsAccount(@PathVariable long accountNumber,
 			@RequestBody SavingsAccountUpdateInput savingsAccountUpdateInput) {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		if (account instanceof SavingsAccount) {
@@ -217,7 +217,7 @@ public class BankController {
 	}
 
 	@DeleteMapping("/accounts/{accountNumber}")
-	public ResponseEntity<Account> deleteAccoount(@PathVariable String accountNumber) {
+	public ResponseEntity<Account> deleteAccoount(@PathVariable long accountNumber) {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		relationshipManager.removeAccount(account);
 		return ResponseEntity.noContent().build();
@@ -232,7 +232,7 @@ public class BankController {
 
 	@DeleteMapping("/customers/{socialSecurityNumber}/accounts/{accountNumber}")
 	public ResponseEntity<Customer> removeAccount(@PathVariable String socialSecurityNumber,
-			@PathVariable String accountNumber) {
+			@PathVariable long accountNumber) {
 		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 
@@ -241,7 +241,7 @@ public class BankController {
 	}
 
 	@DeleteMapping("accounts/{accountNumber}/customers/{socialSecurityNumber}")
-	public ResponseEntity<Account> removeCustomer(@PathVariable String accountNumber,
+	public ResponseEntity<Account> removeCustomer(@PathVariable long accountNumber,
 			@PathVariable String socialSecurityNumber) {
 		Account account = AccountRepositoryHelper.getAccount(accountRepository, accountNumber);
 		Customer customer = CustomerRepositoryHelper.getCustomer(customerRepository, socialSecurityNumber);

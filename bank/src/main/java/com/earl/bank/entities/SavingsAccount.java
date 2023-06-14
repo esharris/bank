@@ -15,7 +15,7 @@ public class SavingsAccount extends Account {
 
 	}
 
-	public SavingsAccount(String accountNumber, BigDecimal balance, Set<Customer> customerSet) {
+	public SavingsAccount(long accountNumber, BigDecimal balance, Set<Customer> customerSet) {
 		super(accountNumber, balance, customerSet);
 	}
 

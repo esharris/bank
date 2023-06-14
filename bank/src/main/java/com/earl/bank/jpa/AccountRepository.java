@@ -8,7 +8,7 @@ import com.earl.bank.entities.Account;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
-	Optional<Account> findByAccountNumber(String accountNumber);
+	Optional<Account> findByAccountNumber(long accountNumber);
 
-	boolean existsByAccountNumber(String accountNumber);
+	boolean existsByAccountNumber(long accountNumber);
 }

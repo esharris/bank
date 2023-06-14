@@ -8,7 +8,7 @@ public class AccountNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = -723919102700807002L;
 
-	public AccountNotFoundException(String accountNumber) {
-		super("account number=" + accountNumber);
+	public AccountNotFoundException(long accountNumber) {
+		super("Account not found. account number: " + accountNumber);
 	}
 }
